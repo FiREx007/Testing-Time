@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>Grand RP Time Converter</title>
   <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Pirata+One&display=swap" rel="stylesheet">
   <style>
     :root {
       --accent-1: #6a8cff;
@@ -27,14 +33,10 @@
       --badge-bg: rgba(60, 110, 255, 0.15);
       --badge-border: rgba(80, 140, 255, 0.28);
       --badge-text: #b8d0ff;
-      /* Blur amount — 0 in lite mode, 22px normally */
       --blur-amount: 22px;
     }
 
-    /* ===== LITE MODE — disables heavy effects ===== */
-    body.lite-mode {
-      --blur-amount: 0px;
-    }
+    body.lite-mode { --blur-amount: 0px; }
     body.lite-mode .bg-video-layer { display: none; }
     body.lite-mode .bg-grid { display: none; }
     body.lite-mode .bg-scanlines { display: none; }
@@ -55,22 +57,21 @@
       background: rgba(8, 6, 20, 0.95);
     }
     body.lite-mode .theme-dropdown,
-    body.lite-mode .tz-modal {
+    body.lite-mode .tz-modal,
+    body.lite-mode .video-credit,
+    body.lite-mode .made-by-tag {
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
     }
     body.lite-mode .brand-text,
     body.lite-mode .brand-icon,
     body.lite-mode .status-dot,
-    body.lite-mode .status-dot::after {
+    body.lite-mode .status-dot::after,
+    body.lite-mode .palette-icon,
+    body.lite-mode .gradient-anim {
       animation: none !important;
     }
-    body.lite-mode .palette-icon {
-      animation: none !important;
-    }
-    body.lite-mode * {
-      cursor: auto !important;
-    }
+    body.lite-mode * { cursor: auto !important; }
 
     * {
       margin: 0;
@@ -98,6 +99,27 @@
     ::selection { background: #ff2d9b; color: #ffffff; }
     ::-moz-selection { background: #ff2d9b; color: #ffffff; }
 
+    /* ===== ANIMATED GRADIENT TEXT UTILITY ===== */
+    .gradient-anim {
+      background: linear-gradient(135deg,
+        var(--text-grad-1) 0%,
+        var(--text-grad-2) 25%,
+        var(--text-grad-3) 50%,
+        var(--text-grad-2) 75%,
+        var(--text-grad-1) 100%);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientFlow 6s ease-in-out infinite;
+    }
+
+    @keyframes gradientFlow {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     /* ===== VIDEO BACKGROUND LAYER ===== */
     .bg-video-layer {
       position: fixed;
@@ -122,9 +144,7 @@
       transition: opacity 1.8s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .bg-video-layer video.ready {
-      opacity: 1;
-    }
+    .bg-video-layer video.ready { opacity: 1; }
 
     .bg-video-overlay {
       position: absolute;
@@ -147,6 +167,76 @@
       opacity: 0.6;
       pointer-events: none;
       transition: background 0.8s ease;
+    }
+
+    /* ===== VIDEO CREDIT (bottom left) ===== */
+    .video-credit {
+      position: fixed;
+      bottom: 16px;
+      left: 18px;
+      z-index: 5;
+      font-size: 0.72rem;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: rgba(200, 215, 255, 0.6);
+      background: rgba(0, 0, 0, 0.42);
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      pointer-events: none;
+      font-weight: 600;
+      transition: border-color 0.3s ease;
+      box-shadow: 0 0 20px color-mix(in srgb, var(--accent-1) 18%, transparent);
+    }
+    .video-credit .gradient-anim {
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    /* ===== MADE BY (top-right) ===== */
+    .made-by-tag {
+      position: fixed;
+      top: 18px;
+      right: 20px;
+      z-index: 5;
+      font-size: 1.05rem;
+      letter-spacing: 1px;
+      color: rgba(220, 230, 255, 0.9);
+      background: linear-gradient(135deg,
+        color-mix(in srgb, var(--accent-1) 25%, rgba(0, 0, 0, 0.65)),
+        color-mix(in srgb, var(--accent-3) 25%, rgba(0, 0, 0, 0.65)));
+      padding: 0.5rem 1.2rem;
+      border-radius: 100px;
+      border: 1px solid color-mix(in srgb, var(--accent-1) 45%, transparent);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow:
+        0 0 25px color-mix(in srgb, var(--accent-1) 30%, transparent),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .made-by-tag .made-by-label {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(200, 215, 255, 0.75);
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .made-by-tag .ninja-font {
+      font-family: 'UnifrakturCook', 'Pirata One', 'Old English Text MT', serif;
+      font-weight: 700;
+      font-size: 1.35rem;
+      line-height: 1;
+      letter-spacing: 0.5px;
+      padding-bottom: 2px;
     }
 
     /* ===== GTA5 FALLBACK BACKGROUND ===== */
@@ -325,10 +415,7 @@
     }
     body.lite-mode .intro-overlay { cursor: auto; }
 
-    .intro-overlay.hide {
-      opacity: 0;
-      pointer-events: none;
-    }
+    .intro-overlay.hide { opacity: 0; pointer-events: none; }
 
     .intro-overlay video {
       position: absolute;
@@ -507,7 +594,7 @@
       width: 450px; height: 450px;
       border-radius: 50%;
       pointer-events: none;
-      z-index: 1;
+      z-index: 10002;
       background: radial-gradient(circle,
         color-mix(in srgb, var(--accent-1) 22%, transparent) 0%,
         color-mix(in srgb, var(--accent-3) 14%, transparent) 30%,
@@ -523,7 +610,7 @@
       width: 36px; height: 36px;
       border-radius: 50%;
       pointer-events: none;
-      z-index: 10000;
+      z-index: 10003;
       border: 1.5px solid color-mix(in srgb, var(--accent-2) 80%, transparent);
       transform: translate(-50%, -50%);
       transition: width 0.18s, height 0.18s, border-color 0.6s, background 0.18s, border-radius 0.18s;
@@ -535,7 +622,7 @@
       width: 8px; height: 8px;
       border-radius: 50%;
       pointer-events: none;
-      z-index: 10001;
+      z-index: 10004;
       background: var(--accent-2);
       box-shadow: 0 0 14px var(--accent-1), 0 0 30px var(--accent-1);
       transform: translate(-50%, -50%);
@@ -562,7 +649,6 @@
       background: color-mix(in srgb, var(--accent-1) 25%, transparent);
     }
 
-    /* Hide custom cursor on touch devices */
     @media (hover: none) and (pointer: coarse) {
       #cursorGlow, #cursorRing, #cursorDot { display: none; }
       * { cursor: auto !important; }
@@ -610,20 +696,23 @@
       animation: iconFloat 3.5s ease-in-out infinite;
     }
 
+    /* Brand text — animated gradient */
     .brand-text {
       font-size: 1.7rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--text-grad-1) 0%, var(--text-grad-2) 60%, var(--text-grad-3) 100%);
-      background-size: 200% 200%;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg,
+        #ffffff 0%,
+        var(--accent-2) 25%,
+        var(--accent-3) 50%,
+        var(--accent-2) 75%,
+        #ffffff 100%);
+      background-size: 300% 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      animation: textShimmer 6s ease infinite;
-    }
-
-    @keyframes textShimmer {
-      0%, 100% { background-position: 0% 50%; }
-      50%      { background-position: 100% 50%; }
+      animation: gradientFlow 5s ease-in-out infinite;
+      text-shadow: 0 0 30px color-mix(in srgb, var(--accent-1) 40%, transparent);
     }
 
     .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -663,7 +752,7 @@
 
     .theme-wrap { position: relative; z-index: 50; }
 
-    .theme-trigger, .tz-btn, .perf-btn {
+    .theme-trigger, .tz-btn, .perf-btn, .format-btn {
       display: flex; align-items: center; gap: 8px;
       background: rgba(0, 0, 0, 0.4);
       padding: 0.5rem 1.1rem;
@@ -676,15 +765,12 @@
       transition: border-color 0.3s, box-shadow 0.3s;
       font-family: inherit;
     }
-    .theme-trigger:hover, .tz-btn:hover, .perf-btn:hover {
+    .theme-trigger:hover, .tz-btn:hover, .perf-btn:hover, .format-btn:hover {
       border-color: var(--accent-2);
       box-shadow: 0 0 25px color-mix(in srgb, var(--accent-1) 25%, transparent);
     }
 
-    .perf-btn {
-      padding: 0.5rem 0.85rem;
-      font-size: 1rem;
-    }
+    .perf-btn { padding: 0.5rem 0.85rem; font-size: 1rem; }
 
     .palette-icon {
       width: 18px; height: 18px;
@@ -960,11 +1046,15 @@
       .brand-text { font-size: 1.35rem; }
       .clocks-grid { grid-template-columns: 1fr; gap: 1.3rem; }
       .clock-time { font-size: 3.3rem; }
-      .theme-trigger, .tz-btn { padding: 0.45rem 0.9rem; font-size: 0.78rem; }
+      .theme-trigger, .tz-btn, .format-btn { padding: 0.45rem 0.9rem; font-size: 0.78rem; }
       .example-conversion { flex-wrap: wrap; justify-content: center; padding: 0.8rem 1.3rem; }
       .header-right { width: 100%; justify-content: flex-end; }
       .theme-dropdown { right: 0; left: auto; min-width: 240px; }
       .intro-skip { bottom: 20px; right: 20px; font-size: 0.7rem; }
+      .video-credit { font-size: 0.6rem; padding: 0.3rem 0.75rem; bottom: 12px; left: 12px; }
+      .made-by-tag { font-size: 0.9rem; padding: 0.4rem 0.95rem; top: 12px; right: 12px; gap: 6px; }
+      .made-by-tag .made-by-label { font-size: 0.55rem; letter-spacing: 1.5px; }
+      .made-by-tag .ninja-font { font-size: 1.15rem; }
     }
 
     @media (max-width: 420px) {
@@ -973,6 +1063,9 @@
       .brand-icon { font-size: 1.7rem; }
       .brand-text { font-size: 1.15rem; }
       .swatch { width: 26px; height: 26px; }
+      .video-credit { font-size: 0.55rem; letter-spacing: 1px; }
+      .made-by-tag { font-size: 0.8rem; padding: 0.35rem 0.8rem; }
+      .made-by-tag .ninja-font { font-size: 1rem; }
     }
   </style>
 </head>
@@ -984,6 +1077,15 @@
     </video>
     <div class="intro-skip" id="introSkipHint">Tap / Press Space to Skip</div>
   </div>
+
+  <!-- ===== MADE BY (top right) ===== -->
+  <div class="made-by-tag">
+    <span class="made-by-label">Made by</span>
+    <span class="ninja-font gradient-anim">Ninja Flexx !</span>
+  </div>
+
+  <!-- ===== VIDEO CREDIT (bottom left) ===== -->
+  <div class="video-credit">BG Video → <span class="gradient-anim">GrandRP</span></div>
 
   <!-- ===== TIMEZONE MODAL ===== -->
   <div class="tz-modal" id="tzModal">
@@ -1081,6 +1183,9 @@
         <span class="brand-text">GRAND RP · TIME</span>
       </div>
       <div class="header-right">
+        <!-- FORMAT TOGGLE BUTTON -->
+        <button class="format-btn" id="formatBtn" title="Toggle 12h / 24h format for IRL time">12h</button>
+        
         <button class="perf-btn" id="perfBtn" title="Toggle lite mode for slow devices">⚡</button>
 
         <button class="tz-btn" id="tzBtn">
@@ -1176,80 +1281,52 @@
 
   <script>
     (function() {
-      // ---------- CONSTANTS ----------
       const DEFAULT_OFFSET_MINUTES = 270;
       const STORAGE_KEY = 'grandRpOffsetMinutes_v2';
       const THEME_KEY = 'grandRpTheme';
       const CUSTOM_KEY = 'grandRpCustomTheme';
       const TZ_KEY = 'grandRpTimezone';
       const TZ_CHOSEN_KEY = 'grandRpTimezoneChosen';
-      const INTRO_SESSION_KEY = 'grandRpIntroShown';
       const LITE_KEY = 'grandRpLiteMode';
+      const FORMAT_KEY = 'grandRpTimeFormat';
 
-      // ---------- DEVICE PERFORMANCE DETECTION ----------
       function detectLowEnd() {
         try {
           const cores = navigator.hardwareConcurrency || 4;
           const mem = navigator.deviceMemory || 4;
           const dpr = window.devicePixelRatio || 1;
           const screenW = window.screen.width;
-
-          // Low-end if:
-          // - 4 or fewer CPU cores
-          // - 4GB or less RAM
-          // - Small screen + high DPR (typical of cheap older phones)
-          // - Known slow UA hints
           if (cores <= 4) return true;
           if (mem <= 4) return true;
           if (screenW <= 400 && dpr >= 3) return true;
-
-          // Legacy iPhone detection (A11 and older — iPhone 8 Plus, X, etc.)
           const ua = navigator.userAgent;
           const oldIPhoneMatch = ua.match(/iPhone.*OS (\d+)_/);
           if (oldIPhoneMatch) {
             const majorVersion = parseInt(oldIPhoneMatch[1], 10);
-            // iOS 15 and older on iPhone = likely older hardware
             if (majorVersion <= 15) return true;
           }
-
-          // Android mid-range detection (Redmi, Realme, Poco etc.)
           if (/Android/.test(ua)) {
-            // Check device pixel ratio + screen size combos
             if (dpr <= 2 && screenW <= 400) return true;
           }
-
           return false;
-        } catch(e) {
-          return false;
-        }
+        } catch(e) { return false; }
       }
 
       function enableLiteMode(save = true) {
         document.body.classList.add('lite-mode');
-        // Pause background video to save battery/CPU
         try { bgVideo.pause(); } catch(e) {}
-        // Update perf button
         const perfBtn = document.getElementById('perfBtn');
-        if (perfBtn) perfBtn.textContent = '⚡';
-        perfBtn.title = 'Lite mode ON — tap to turn off';
-        if (save) {
-          try { localStorage.setItem(LITE_KEY, '1'); } catch(e) {}
-        }
+        if (perfBtn) perfBtn.title = 'Lite mode ON — tap to turn off';
+        if (save) { try { localStorage.setItem(LITE_KEY, '1'); } catch(e) {} }
       }
-
       function disableLiteMode(save = true) {
         document.body.classList.remove('lite-mode');
-        // Resume background video
         try { bgVideo.play().catch(() => {}); } catch(e) {}
         const perfBtn = document.getElementById('perfBtn');
-        if (perfBtn) perfBtn.textContent = '⚡';
-        perfBtn.title = 'Lite mode OFF — tap to turn on';
-        if (save) {
-          try { localStorage.setItem(LITE_KEY, '0'); } catch(e) {}
-        }
+        if (perfBtn) perfBtn.title = 'Lite mode OFF — tap to turn on';
+        if (save) { try { localStorage.setItem(LITE_KEY, '0'); } catch(e) {} }
       }
 
-      // ---------- DOM ----------
       const irlClockEl = document.getElementById('irlClock');
       const grandClockEl = document.getElementById('grandClock');
       const irlDateEl = document.getElementById('irlDate');
@@ -1260,7 +1337,6 @@
       const exampleGrandEl = document.getElementById('exampleGrand');
       const particlesContainer = document.getElementById('particles');
       const bgVideo = document.getElementById('bgVideo');
-
       const themeWrap = document.getElementById('themeWrap');
       const themeTrigger = document.getElementById('themeTrigger');
       const swatches = document.querySelectorAll('.swatch');
@@ -1268,7 +1344,6 @@
       const customAccent2 = document.getElementById('customAccent2');
       const customAccent3 = document.getElementById('customAccent3');
       const saveThemeBtn = document.getElementById('saveThemeBtn');
-
       const tzBtn = document.getElementById('tzBtn');
       const tzBtnLabel = document.getElementById('tzBtnLabel');
       const tzModal = document.getElementById('tzModal');
@@ -1278,7 +1353,7 @@
       const autoDetectTime = document.getElementById('autoDetectTime');
       const autoDetectTz = document.getElementById('autoDetectTz');
       const perfBtn = document.getElementById('perfBtn');
-
+      const formatBtn = document.getElementById('formatBtn');
       const introOverlay = document.getElementById('introOverlay');
       const introVideo = document.getElementById('introVideo');
 
@@ -1287,27 +1362,19 @@
       let userTimezone = 'Asia/Kolkata';
       let detectedTimezone = 'Asia/Kolkata';
       let liteMode = false;
+      let is12Hour = false;
 
-      // ---------- INIT LITE MODE DECISION ----------
       function initLiteMode() {
         let saved = null;
         try { saved = localStorage.getItem(LITE_KEY); } catch(e) {}
-
-        if (saved === '1') {
-          liteMode = true;
-          enableLiteMode(false);
-        } else if (saved === '0') {
-          liteMode = false;
-          disableLiteMode(false);
-        } else {
-          // First visit — auto-detect
+        if (saved === '1') { liteMode = true; enableLiteMode(false); }
+        else if (saved === '0') { liteMode = false; disableLiteMode(false); }
+        else {
           const lowEnd = detectLowEnd();
           liteMode = lowEnd;
           if (lowEnd) enableLiteMode(true);
           else disableLiteMode(false);
         }
-
-        // Wire toggle button
         perfBtn.addEventListener('click', () => {
           liteMode = !liteMode;
           if (liteMode) enableLiteMode(true);
@@ -1315,17 +1382,26 @@
         });
       }
 
-      // ---------- BACKGROUND VIDEO ----------
-      function initVideoBackground() {
-        // Skip loading video entirely in lite mode
-        if (liteMode) {
-          bgVideo.style.display = 'none';
-          return;
-        }
+      function initFormatToggle() {
+        try {
+          const saved = localStorage.getItem(FORMAT_KEY);
+          if (saved === '12') is12Hour = true;
+        } catch(e) {}
+        
+        formatBtn.textContent = is12Hour ? '12h' : '24h';
+        
+        formatBtn.addEventListener('click', () => {
+          is12Hour = !is12Hour;
+          formatBtn.textContent = is12Hour ? '12h' : '24h';
+          try { localStorage.setItem(FORMAT_KEY, is12Hour ? '12' : '24'); } catch(e) {}
+          updateClocks();
+        });
+      }
 
+      function initVideoBackground() {
+        if (liteMode) { bgVideo.style.display = 'none'; return; }
         bgVideo.addEventListener('canplaythrough', () => bgVideo.classList.add('ready'), { once: true });
         bgVideo.addEventListener('loadeddata', () => bgVideo.classList.add('ready'), { once: true });
-
         const tryPlay = () => {
           const p = bgVideo.play();
           if (p && p.catch) {
@@ -1346,33 +1422,24 @@
         bgVideo.addEventListener('error', () => { bgVideo.style.display = 'none'; });
       }
 
-      // ---------- INTRO ----------
       function hideIntro() {
         if (introOverlay.classList.contains('hide')) return;
         introOverlay.classList.add('hide');
-
         let tzAlreadyChosen = false;
         try { tzAlreadyChosen = localStorage.getItem(TZ_CHOSEN_KEY) === '1'; } catch(e) {}
-
         if (!tzAlreadyChosen) {
           setTimeout(() => {
             updateAutoDetectBanner();
             tzModal.classList.add('show');
           }, 800);
         }
-
         setTimeout(() => {
           introOverlay.style.display = 'none';
           try { introVideo.pause(); } catch(e) {}
         }, 1500);
       }
 
-      function markIntroShown() {
-        try { sessionStorage.setItem(INTRO_SESSION_KEY, '1'); } catch(e) {}
-      }
-
       function initIntro() {
-        // Skip intro entirely in lite mode
         if (liteMode) {
           introOverlay.style.display = 'none';
           let tzAlreadyChosen = false;
@@ -1385,64 +1452,26 @@
           }
           return;
         }
-
-        let alreadyShown = false;
-        try { alreadyShown = sessionStorage.getItem(INTRO_SESSION_KEY) === '1'; } catch(e) {}
-
-        if (alreadyShown) {
-          introOverlay.style.display = 'none';
-          let tzAlreadyChosen = false;
-          try { tzAlreadyChosen = localStorage.getItem(TZ_CHOSEN_KEY) === '1'; } catch(e) {}
-          if (!tzAlreadyChosen) {
-            setTimeout(() => {
-              updateAutoDetectBanner();
-              tzModal.classList.add('show');
-            }, 400);
-          }
-          return;
-        }
-
+        try { introVideo.currentTime = 0; } catch(e) {}
         const playPromise = introVideo.play();
         if (playPromise && playPromise.catch) {
           playPromise.catch(() => hideIntro());
         }
-
-        introVideo.addEventListener('ended', () => {
-          markIntroShown();
-          hideIntro();
-        }, { once: true });
-
-        introVideo.addEventListener('error', () => hideIntro(), { once: true });
-
+        introVideo.addEventListener('ended', hideIntro, { once: true });
+        introVideo.addEventListener('error', hideIntro, { once: true });
         setTimeout(() => {
-          if (!introOverlay.classList.contains('hide')) {
-            markIntroShown();
-            hideIntro();
-          }
+          if (!introOverlay.classList.contains('hide')) hideIntro();
         }, 30000);
-
-        introOverlay.addEventListener('click', () => {
-          markIntroShown();
-          hideIntro();
-        });
-
-        introOverlay.addEventListener('touchstart', () => {
-          markIntroShown();
-          hideIntro();
-        }, { passive: true });
-
+        introOverlay.addEventListener('click', hideIntro);
+        introOverlay.addEventListener('touchstart', hideIntro, { passive: true });
         document.addEventListener('keydown', (e) => {
           if (e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar') {
             e.preventDefault();
-            if (!introOverlay.classList.contains('hide')) {
-              markIntroShown();
-              hideIntro();
-            }
+            if (!introOverlay.classList.contains('hide')) hideIntro();
           }
         });
       }
 
-      // ---------- COLOR UTILS ----------
       function hexToRgb(hex) {
         const h = hex.replace('#', '');
         return {
@@ -1589,7 +1618,6 @@
         setTimeout(() => { saveThemeBtn.textContent = 'SAVE THEME'; }, 1500);
       });
 
-      // ---------- TIMEZONE ----------
       const TZ_LABELS = {
         'Asia/Kolkata': 'IST', 'UTC': 'UTC',
         'America/New_York': 'EST', 'America/Chicago': 'CST',
@@ -1677,22 +1705,18 @@
         updateAutoDetectBanner();
         tzModal.classList.add('show');
       });
-
       tzConfirm.addEventListener('click', () => {
         saveTimezone(tzSelect.value);
         tzModal.classList.remove('show');
       });
-
       tzAutoConfirm.addEventListener('click', () => {
         saveTimezone(detectedTimezone);
         tzModal.classList.remove('show');
       });
-
       setInterval(() => {
         if (tzModal.classList.contains('show')) updateAutoDetectBanner();
       }, 1000);
 
-      // ---------- PARTICLES (skipped in lite mode) ----------
       function createParticles() {
         if (liteMode) return;
         const count = window.innerWidth < 600 ? 25 : 45;
@@ -1718,7 +1742,6 @@
       }
       createParticles();
 
-      // ---------- CUSTOM CURSOR (desktop only, skip in lite) ----------
       const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
       const cursorGlow = document.getElementById('cursorGlow');
       const cursorRing = document.getElementById('cursorRing');
@@ -1734,13 +1757,18 @@
         document.addEventListener('mousemove', (e) => {
           mouseX = e.clientX;
           mouseY = e.clientY;
+          cursorGlow.style.opacity = '1';
+          cursorRing.style.opacity = '1';
+          cursorDot.style.opacity = '1';
         });
-        document.addEventListener('mouseleave', () => {
-          cursorGlow.style.opacity = '0';
-          cursorRing.style.opacity = '0';
-          cursorDot.style.opacity = '0';
+        document.addEventListener('mouseout', (e) => {
+          if (!e.relatedTarget && !e.toElement) {
+            cursorGlow.style.opacity = '0';
+            cursorRing.style.opacity = '0';
+            cursorDot.style.opacity = '0';
+          }
         });
-        document.addEventListener('mouseenter', () => {
+        document.addEventListener('mouseover', () => {
           cursorGlow.style.opacity = '1';
           cursorRing.style.opacity = '1';
           cursorDot.style.opacity = '1';
@@ -1760,7 +1788,7 @@
         }
         animateCursor();
 
-        const interactiveSelector = 'button, a, input, select, textarea, .theme-trigger, .swatch, .clock-card, .tz-badge, .irl-example, .rp-example, .color-picker-wrap, .tz-btn, .perf-btn';
+        const interactiveSelector = 'button, a, input, select, textarea, .theme-trigger, .swatch, .clock-card, .tz-badge, .irl-example, .rp-example, .color-picker-wrap, .tz-btn, .perf-btn, .format-btn';
         document.addEventListener('mouseover', (e) => {
           const target = e.target;
           if (target.closest(interactiveSelector)) {
@@ -1779,7 +1807,6 @@
         document.addEventListener('mouseup', () => document.body.classList.remove('cursor-down'));
       }
 
-      // ---------- OFFSET ----------
       function loadOffsetFromStorage() {
         try {
           const saved = localStorage.getItem(STORAGE_KEY);
@@ -1804,7 +1831,6 @@
         offsetTagEl.textContent = formatted;
       }
 
-      // ---------- TIME ----------
       function getIrlTimeParts() {
         const now = new Date();
         const formatter = new Intl.DateTimeFormat('en-GB', {
@@ -1829,6 +1855,20 @@
       function formatTime(h, m, s) {
         return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
       }
+      
+      // New function to specifically handle 12h formatting for the IRL clock
+      function formatIrlTime(h, m, s) {
+        if (!is12Hour) {
+          return formatTime(h, m, s);
+        }
+        
+        const period = h >= 12 ? 'PM' : 'AM';
+        const hour12 = h % 12 || 12;
+        
+        // Add a smaller AM/PM span for styling
+        return `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} <span style="font-size: 0.45em; letter-spacing: 0; font-weight: 600; margin-left: 4px; opacity: 0.7;">${period}</span>`;
+      }
+
       function formatTimeShort(h, m) {
         return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
       }
@@ -1848,16 +1888,21 @@
         const grandMins = grandMinutes % 60;
         const seconds = irl.seconds;
 
-        irlClockEl.textContent = formatTime(irl.hours, irl.minutes, seconds);
+        // IRL Clock updates with 12h or 24h formatting
+        irlClockEl.innerHTML = formatIrlTime(irl.hours, irl.minutes, seconds);
+        
         irlDateEl.textContent = formatDate(irl.dateObj);
+        
+        // Grand RP clock remains always in 24h format
         grandClockEl.textContent = formatTime(grandHours, grandMins, seconds);
+        
         exampleIrlEl.textContent = formatTimeShort(irl.hours, irl.minutes);
         exampleGrandEl.textContent = formatTimeShort(grandHours, grandMins);
       }
 
-      // ---------- INIT ----------
       function init() {
         initLiteMode();
+        initFormatToggle();
         initVideoBackground();
         loadOffsetFromStorage();
         updateOffsetLabels();
